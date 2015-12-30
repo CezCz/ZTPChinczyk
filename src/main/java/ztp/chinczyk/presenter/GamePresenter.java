@@ -15,13 +15,26 @@ public class GamePresenter implements GamePresenterInterface {
 		this.gameView = gameView;
 		this.modelFacade = modelFacade;
 	}
-	
-	
+
 	@Override
 	public void run(Container c) {
 
 		c.add(gameView);
 		
 	}
+
+	@Override
+	public void onStartGame() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onResignGame() {
+		// TODO Auto-generated method stub
+
+	}
+
+	
 
 }

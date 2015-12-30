@@ -25,10 +25,12 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 	public void run(Container c) {
 
 		c.add((Component) loginView);
+		
 	}
 
 	@Override
 	public void onStartNewGame() {
+		
 		GameView gameView = (GameView) ViewFactory.getView("GameView");
 		GamePresenter gamePresenter = new GamePresenter(gameView, modelFacade);
 		gameView.registerPresenter(gamePresenter);
