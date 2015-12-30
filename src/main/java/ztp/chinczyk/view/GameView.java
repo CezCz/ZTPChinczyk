@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -13,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import ztp.chinczyk.model.Colors;
 import ztp.chinczyk.presenter.GamePresenter;
 import ztp.chinczyk.view.interfaces.GameViewInterface;
 import ztp.chinczyk.view.interfaces.View;
@@ -22,28 +24,26 @@ public class GameView extends JPanel implements GameViewInterface {
 	GamePresenter gamePresenter;
 
 	private JPanel gameField;
+	private ArrayList<JLabel> playersLabels;
 	private JLabel board;
 	private JPanel infoField;
 	private JButton readyToPlay;
-	private JButton resignGame;
 	private PictureManager picasso = PictureManager.getInstance();
-	
+
 	public GameView() {
 		gameField = new JPanel();
 		board = new JLabel(new ImageIcon(picasso.getBoard()));
 		gameField.add(board);
-		
+
 		infoField = new JPanel();
 		readyToPlay = new JButton("Start");
-		resignGame = new JButton("Resign");
-		
+
 		this.add(gameField);
 
 		infoField.add(readyToPlay);
-		infoField.add(resignGame);
 
 		this.add(infoField);
-		
+
 	}
 
 	private static class Factory extends ViewFactory {
@@ -67,20 +67,6 @@ public class GameView extends JPanel implements GameViewInterface {
 			}
 		});
 
-		resignGame.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				p.onResignGame();
-			}
-		});
-
-		// startGame Button
-		// resignGame Button
-		// gameFieldPanel
-		// pawns buttons
-		// eventPass
-		// player show with colors
-
 	}
 
 	@Override
@@ -91,6 +77,41 @@ public class GameView extends JPanel implements GameViewInterface {
 	@Override
 	public void hide() {
 		super.setVisible(false);
+	}
+
+	public void addPlayer(String playerName) {
+		if (playersLabels == null) {
+			playersLabels = new ArrayList<>();
+		}
+
+		JLabel tmp = new JLabel(playerName);
+		playersLabels.add(tmp);
+		infoField.add(tmp);
+
+		revalidate();
+		repaint();
+
+	}
+
+	public void removePlayer(String playerName) {
+		JLabel labelToRemove = null;
+
+		for (JLabel l : playersLabels) {
+			if (l.getText().equals(playerName))
+				labelToRemove = l;
+		}
+
+		infoField.remove(labelToRemove);
+		playersLabels.remove(playersLabels.indexOf(labelToRemove));
+
+		revalidate();
+		repaint();
+	}
+
+	public void drawPawns(Colors playerColor) {
+		
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -104,6 +104,10 @@ public class GameState {
 		return currentPlayer;
 	}
 
+	public int getPlayerNumber(String player) {
+		return playersList.indexOf(player);
+	}
+
 }
 
 interface IPawn {

@@ -18,23 +18,31 @@ public class GamePresenter implements GamePresenterInterface {
 
 	@Override
 	public void run(Container c) {
+		onGameJoin("MyMyselfAndI");
+		onGameJoin("MyMyselfAndI2");
 
 		c.add(gameView);
-		
+
 	}
 
 	@Override
 	public void onStartGame() {
+
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void onResignGame() {
-		// TODO Auto-generated method stub
-
+	public void onGameJoin(String player) {
+		modelFacade.getGameLogic().getGs().addPlayer(player);
+		gameView.addPlayer(player);
+		gameView.drawPawns(modelFacade.getGameLogic().getGs().getPlayerColor(modelFacade.getGameLogic().getGs().getPlayerNumber(player)));
+		
+		// gameView.drawPawns();
 	}
 
-	
+	public void onGameLeave(String player) {
+		modelFacade.getGameLogic().getGs().removePlayer(player);
+		gameView.removePlayer(player);
+	}
 
 }

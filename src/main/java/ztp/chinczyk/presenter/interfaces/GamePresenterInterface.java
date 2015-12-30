@@ -4,7 +4,6 @@ public interface GamePresenterInterface extends Presenter {
 	
 	public void onStartGame();
 	
-	public void onResignGame();
 	
 	
 	

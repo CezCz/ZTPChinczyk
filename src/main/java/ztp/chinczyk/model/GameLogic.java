@@ -14,10 +14,6 @@ public class GameLogic {
 		gs = new GameState();
 	}
 
-	public void addPlayer(String name) {
-		gs.addPlayer(name);
-	}
-
 	public void nextPlayer() {
 		gs.setCurrentPlayer();
 		prePlayerMove();
