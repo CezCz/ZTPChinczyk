@@ -45,7 +45,7 @@ public class GameLogic {
 
 		if (movable) {
 			p.setPosition(p.getPosition() + gs.getDiceRoll());
-			sendOtherToHouse(p.getPosition());
+			sendOtherToHouse(p);
 			checkWin();
 			nextPlayer();
 		} else {
@@ -53,18 +53,19 @@ public class GameLogic {
 		}
 	}
 
-	private void sendOtherToHouse(int position) {
+	private void sendOtherToHouse(IPawn p) {
 		int allPlayers = gs.getPlayerCount();
+		PawnRelative myPawnRel = new PawnRelative(p, gs.getPlayerColor(gs.getCurrentPlayer()));
 		for (int i = 0; i < allPlayers; i++) {
 			if (i != gs.getCurrentPlayer()) {
 				PawnSet ps = gs.getPlayersPawns(i);
 				Iterator<IPawn> psi = ps.createIterator();
 				psi.first();
 				while (!psi.isDone()) {
-					IPawn p = psi.currentItem();
+					IPawn p2 = new PawnRelative(psi.currentItem(), gs.getPlayerColor(i));
 					
-					if (p.getPosition() == position) {
-						p.resetPawn();
+					if (p2.getPosition() == myPawnRel.getPosition()) {
+						p2.resetPawn();
 						return;
 					}
 					psi.next();
@@ -84,8 +85,11 @@ public class GameLogic {
 			}
 			it.next();
 		}
+		System.out.println("winner?");
 		if (winner) {
+			System.out.println("Winner set");
 			gs.setWinner();
+			gs.setFinished(true);
 		}
 	}
 
@@ -160,7 +164,6 @@ public class GameLogic {
 
 	public void doPass() {
 		nextPlayer();
-
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 public class GameState {
 
 	private ArrayList<String> playersList;
+	private ArrayList<Colors> playerColor;
 	private ArrayList<PawnSet> playersPawns;
 	private int currentPlayer;
 	private int diceRoll;
@@ -18,10 +19,15 @@ public class GameState {
 	public GameState() {
 		playersList = new ArrayList<>();
 		playersPawns = new ArrayList<>();
+		playerColor = new ArrayList<>();
 		currentPlayer = 0;
 		finished = false;
 		anyMovable = false;
 		isSix = false;
+	}
+	
+	public Colors getPlayerColor(int whos) {
+		return playerColor.get(whos);
 	}
 
 	public void setCurrentPlayer() {
@@ -83,6 +89,7 @@ public class GameState {
 	public void addPlayer(String name) {
 		playersList.add(name);
 		try {
+			playerColor.add(PawnSetPool.getPawnColor());
 			playersPawns.add(PawnSetPool.getPawnSet());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,7 +173,7 @@ class PawnRelative implements IPawn {
 		p.setPosition(absPos);
 
 	}
-	
+
 	@Override
 	public void resetPawn() {
 		p.resetPawn();
@@ -181,10 +188,10 @@ interface Aggregate<E> {
 class PawnSet implements Aggregate<IPawn> {
 	private ArrayList<IPawn> pawns;
 
-	public PawnSet(Colors c) {
+	public PawnSet() {
 		pawns = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			pawns.add(new PawnRelative(new Pawn(), c));
+			pawns.add(new Pawn());
 		}
 	}
 
@@ -199,7 +206,7 @@ class PawnSet implements Aggregate<IPawn> {
 	@Override
 	public String toString() {
 		return pawns.get(0).getPosition() + " " + pawns.get(1).getPosition() + " " + pawns.get(2).getPosition() + " "
-				+ pawns.get(3).getPosition() + " Color: " + ((PawnRelative) pawns.get(0)).c ;
+				+ pawns.get(3).getPosition();
 	}
 
 }
@@ -255,10 +262,9 @@ class PawnSetPool {
 	private static int count = 0;
 
 	static {
-		pawnPool.add(new PawnSet(Colors.GREEN));
-		pawnPool.add(new PawnSet(Colors.YELLOW));
-		pawnPool.add(new PawnSet(Colors.BLUE));
-		pawnPool.add(new PawnSet(Colors.RED));
+		for (int i = 0; i < 4; i++) {
+			pawnPool.add(new PawnSet());
+		}
 	}
 
 	public static PawnSet getPawnSet() throws Exception {
@@ -266,6 +272,21 @@ class PawnSetPool {
 			return pawnPool.get(count++);
 		} else {
 			throw new Exception("No more free pawn sets!");
+		}
+	}
+
+	public static Colors getPawnColor() throws Exception {
+		switch (count) {
+		case 0:
+			return Colors.GREEN;
+		case 1:
+			return Colors.YELLOW;
+		case 2:
+			return Colors.BLUE;
+		case 3:
+			return Colors.RED;
+		default:
+			throw new Exception("No more free pawn sets");
 		}
 	}
 
