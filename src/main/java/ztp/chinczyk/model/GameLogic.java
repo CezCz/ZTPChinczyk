@@ -1,5 +1,11 @@
 package ztp.chinczyk.model;
 
+import ztp.chinczyk.model.pawn.IPawn;
+import ztp.chinczyk.model.pawn.PawnRelative;
+import ztp.chinczyk.model.pawn.PawnSet;
+import ztp.chinczyk.model.util.Dice;
+import ztp.util.iterator.Iterator;
+
 public class GameLogic {
 
 	private GameState gs;
@@ -16,6 +22,7 @@ public class GameLogic {
 
 	public void nextPlayer() {
 		gs.setCurrentPlayer();
+		gs.setCurrentPlayerMoves(0);
 		prePlayerMove();
 	}
 
@@ -25,7 +32,7 @@ public class GameLogic {
 
 	public void doMove(int pawnNumber) {
 		PawnSet ps = gs.getCurrentPlayerPawns();
-		IPawn p = ps.getPawn(pawnNumber);
+		IPawn<Integer> p = ps.getPawn(pawnNumber);
 		boolean movable = false;
 		if (isInHouse(p) && gs.getDiceRoll() == 6) {
 			movable = true;
@@ -40,13 +47,32 @@ public class GameLogic {
 		}
 
 		if (movable) {
-			p.setPosition(p.getPosition() + gs.getDiceRoll());
-			sendOtherToHouse(p);
-			checkWin();
-			nextPlayer();
+			movable = movePawn(p);
+			if (movable) {
+				sendOtherToHouse(p);
+				checkWin();
+				if (gs.getRepeat()) {
+					prePlayerMove();
+				} else {
+					nextPlayer();
+				}
+			}
 		} else {
 			System.out.println("not possible");
 		}
+	}
+
+	private boolean movePawn(IPawn<Integer> p) {
+		if (p.getPosition() == 0) {
+			if (gs.getDiceRoll() == 6) {
+				p.setPosition(1);
+			} else {
+				return false;
+			}
+		} else {
+			p.setPosition(p.getPosition() + gs.getDiceRoll());
+		}
+		return true;
 	}
 
 	private void sendOtherToHouse(IPawn p) {
@@ -55,11 +81,11 @@ public class GameLogic {
 		for (int i = 0; i < allPlayers; i++) {
 			if (i != gs.getCurrentPlayer()) {
 				PawnSet ps = gs.getPlayersPawns(i);
-				Iterator<IPawn> psi = ps.createIterator();
+				Iterator<IPawn<Integer>> psi = ps.createIterator();
 				psi.first();
 				while (!psi.isDone()) {
 					IPawn p2 = new PawnRelative(psi.currentItem(), gs.getPlayerColor(i));
-					
+
 					if (p2.getPosition() == myPawnRel.getPosition()) {
 						p2.resetPawn();
 						return;
@@ -72,7 +98,7 @@ public class GameLogic {
 
 	public void checkWin() {
 		PawnSet ps = gs.getCurrentPlayerPawns();
-		Iterator<IPawn> it = ps.createIterator();
+		Iterator<IPawn<Integer>> it = ps.createIterator();
 		it.first();
 		boolean winner = true;
 		while (!it.isDone()) {
@@ -81,9 +107,7 @@ public class GameLogic {
 			}
 			it.next();
 		}
-		System.out.println("winner?");
 		if (winner) {
-			System.out.println("Winner set");
 			gs.setWinner();
 			gs.setFinished(true);
 		}
@@ -94,16 +118,21 @@ public class GameLogic {
 	}
 
 	public void prePlayerMove() {
-		int roll = Dice.rollDice();
-		gs.setDiceRoll(roll);
+		rollDice();
 		checkIfSix();
 		checkIfAnyMovePossible();
+	}
+
+	private void rollDice() {
+		int roll = Dice.rollDice();
+		gs.setDiceRoll(roll);
+		gs.setCurrentPlayerMoves(gs.getCurrentPlayerMoves() + 1);
 	}
 
 	private void checkIfAnyMovePossible() {
 		PawnSet pw = gs.getCurrentPlayerPawns();
 		gs.setAnyMovable(false);
-		Iterator<IPawn> p = pw.createIterator();
+		Iterator<IPawn<Integer>> p = pw.createIterator();
 		p.first();
 		while (!p.isDone()) {
 			if (p.currentItem().getPosition() == house && gs.getDiceRoll() == 6) {
@@ -122,16 +151,16 @@ public class GameLogic {
 		}
 	}
 
-	private boolean isInHouse(IPawn p) {
+	private boolean isInHouse(IPawn<Integer> p) {
 		return p.getPosition() == house;
 	}
 
-	private boolean isMovable(IPawn p) {
+	private boolean isMovable(IPawn<Integer> p) {
 		return p.getPosition() + gs.getDiceRoll() < 45;
 	}
 
-	private boolean isCollided(IPawn p, PawnSet pw) {
-		Iterator<IPawn> k = pw.createIterator();
+	private boolean isCollided(IPawn<Integer> p, PawnSet pw) {
+		Iterator<IPawn<Integer>> k = pw.createIterator();
 		k.first();
 		boolean isCollided = false;
 		while (!k.isDone()) {
@@ -148,7 +177,9 @@ public class GameLogic {
 
 	private void checkIfSix() {
 		if (gs.getDiceRoll() == 6) {
-			gs.setRepeat(true);
+			if (gs.getCurrentPlayerMoves() < 4) {
+				gs.setRepeat(true);
+			}
 		} else {
 			gs.setRepeat(false);
 		}
@@ -160,6 +191,18 @@ public class GameLogic {
 
 	public void doPass() {
 		nextPlayer();
+	}
+
+	public void removePlayer(String name) {
+
+		gs.removePlayer(name);
+		// pop pawnset
+		// remove player
+
+	}
+
+	public void addPlayer(String name) {
+		gs.addPlayer(name);
 	}
 
 }

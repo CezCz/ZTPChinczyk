@@ -1,10 +1,21 @@
 package ztp.chinczyk.presenter;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.util.EnumMap;
+
+import com.sun.org.apache.xml.internal.utils.Hashtree2Node;
 
 import ztp.chinczyk.model.ModelFacade;
+import ztp.chinczyk.model.pawn.IPawn;
+import ztp.chinczyk.model.pawn.PawnRelative;
+import ztp.chinczyk.model.pawn.PawnSet;
+import ztp.chinczyk.model.pawn.PawnSetIterator;
+import ztp.chinczyk.model.util.Colors;
 import ztp.chinczyk.presenter.interfaces.GamePresenterInterface;
 import ztp.chinczyk.view.GameView;
+import ztp.chinczyk.view.PawnColor;
+import ztp.util.iterator.Iterator;
 
 public class GamePresenter implements GamePresenterInterface {
 
@@ -14,6 +25,10 @@ public class GamePresenter implements GamePresenterInterface {
 	public GamePresenter(GameView gameView, ModelFacade modelFacade) {
 		this.gameView = gameView;
 		this.modelFacade = modelFacade;
+		em.put(Colors.GREEN, PawnColor.GREEN);
+		em.put(Colors.RED, PawnColor.RED);
+		em.put(Colors.YELLOW, PawnColor.YELLOW);
+		em.put(Colors.BLUE, PawnColor.BLUE);
 	}
 
 	@Override
@@ -32,16 +47,25 @@ public class GamePresenter implements GamePresenterInterface {
 
 	}
 
+	EnumMap<Colors, PawnColor> em = new EnumMap<>(Colors.class);
+
 	public void onGameJoin(String player) {
-		modelFacade.getGameLogic().getGs().addPlayer(player);
+		modelFacade.addPlayer(player);
 		gameView.addPlayer(player);
-		gameView.drawPawns(modelFacade.getGameLogic().getGs().getPlayerColor(modelFacade.getGameLogic().getGs().getPlayerNumber(player)));
-		
-		// gameView.drawPawns();
+
+		PawnSet ps = modelFacade.getPlayerPawnSet(player);
+		Iterator<IPawn<Integer>> psi = ps.createIterator();
+		psi.first();
+		while (!psi.isDone()) {
+			PawnView p = new PawnView(new PawnRelative(psi.currentItem(), modelFacade.getPlayerColor(player)),
+					((PawnSetIterator) psi).getCurrentElement(), em.get(modelFacade.getPlayerColor(player)));
+			gameView.drawPawn(p);
+			psi.next();
+		}
 	}
 
 	public void onGameLeave(String player) {
-		modelFacade.getGameLogic().getGs().removePlayer(player);
+		modelFacade.removePlayer(player);
 		gameView.removePlayer(player);
 	}
 

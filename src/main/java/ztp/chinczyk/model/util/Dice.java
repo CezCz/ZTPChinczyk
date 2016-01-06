@@ -1,4 +1,4 @@
-package ztp.chinczyk.model;
+package ztp.chinczyk.model.util;
 
 import java.util.Random;
 

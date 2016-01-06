@@ -1,5 +1,6 @@
 package ztp.chinczyk.view;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -9,13 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import ztp.chinczyk.model.Colors;
+import ztp.chinczyk.model.pawn.IPawn;
 import ztp.chinczyk.presenter.GamePresenter;
+import ztp.chinczyk.presenter.PawnView;
 import ztp.chinczyk.view.interfaces.GameViewInterface;
 import ztp.chinczyk.view.interfaces.View;
 
@@ -107,17 +110,16 @@ public class GameView extends JPanel implements GameViewInterface {
 		revalidate();
 		repaint();
 	}
-
-	public void drawPawns(Colors playerColor) {
-		
-		// TODO Auto-generated method stub
-		
+	
+	public void drawPawn(IPawn<Point> pawn) {
+		BufferedImage bi = picasso.getPawn(((PawnView) pawn).getColor());
+		JLabel pawnLabel = new JLabel();
+		pawnLabel.setIcon(new ImageIcon(bi));
+		pawnLabel.
+		// fucking no idea how to set absolute value for motherfucker
 	}
 
-}
 
-enum PawnColor {
-	RED, BLUE, YELLOW, GREEN;
 }
 
 class PictureManager {
