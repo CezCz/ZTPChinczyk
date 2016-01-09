@@ -1,5 +1,7 @@
 package ztp.chinczyk.model.util;
 
-public enum Colors {
+import java.io.Serializable;
+
+public enum Colors implements Serializable{
 	GREEN, BLUE, YELLOW, RED
 }

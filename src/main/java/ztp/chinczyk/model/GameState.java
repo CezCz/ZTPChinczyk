@@ -1,12 +1,13 @@
 package ztp.chinczyk.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ztp.chinczyk.model.pawn.PawnSet;
 import ztp.chinczyk.model.pawn.PawnSetPool;
 import ztp.chinczyk.model.util.Colors;
 
-public class GameState {
+public class GameState implements Serializable{
 
 	private ArrayList<String> playersList;
 	private ArrayList<PawnSet> playersPawns;

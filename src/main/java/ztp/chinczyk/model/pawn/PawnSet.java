@@ -1,12 +1,13 @@
 package ztp.chinczyk.model.pawn;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ztp.chinczyk.model.util.Colors;
 import ztp.util.iterator.Aggregate;
 import ztp.util.iterator.Iterator;
 
-public class PawnSet implements Aggregate<IPawn<Integer>> {
+public class PawnSet implements Aggregate<IPawn<Integer>>, Serializable{
 	private ArrayList<IPawn> pawns;
 	private Colors c;
 	

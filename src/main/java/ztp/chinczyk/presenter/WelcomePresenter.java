@@ -6,19 +6,29 @@ import java.awt.Container;
 import javax.swing.JFrame;
 
 import ztp.chinczyk.model.ModelFacade;
+import ztp.chinczyk.model.Settings;
+import ztp.chinczyk.presenter.interfaces.Presenter;
 import ztp.chinczyk.presenter.interfaces.WelcomePresenterInterface;
-import ztp.chinczyk.view.GameView;
-import ztp.chinczyk.view.ViewFactory;
-import ztp.chinczyk.view.WelcomeView;
+import ztp.chinczyk.view.*;
 
 public class WelcomePresenter implements WelcomePresenterInterface {
 
+	MainPresenter parent;
 	WelcomeView loginView;
 	ModelFacade modelFacade;
 
-	public WelcomePresenter(WelcomeView loginView, ModelFacade modelFacade) {
+	JoinView joinView;
+	JoinPresenter joinPresenter;
+	JFrame joinFrame;
+
+	SettingsView settingsView;
+	SettingsPresenter settingsPresenter;
+	JFrame settingsFrame;
+
+	public WelcomePresenter(WelcomeView loginView, ModelFacade modelFacade, MainPresenter parent) {
 		this.loginView = loginView;
 		this.modelFacade = modelFacade;
+		this.parent = parent;
 	}
 
 	@Override
@@ -44,15 +54,62 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 
 	@Override
 	public void onJoinGame() {
-		
+		if(joinFrame == null){
+			joinView = (JoinView) ViewFactory.getView("JoinView");
+			joinPresenter = new JoinPresenter(joinView,this);
+			joinFrame = new JFrame();
+			joinPresenter.run(joinFrame);
+			joinFrame.setVisible(true);
+			joinFrame.pack();
+		}
+		else if(joinFrame.isVisible()){
+			joinFrame.setVisible(false);
+		}
+		else {
+			joinFrame.setVisible(true);
+		}
 	}
 
 	@Override
 	public void onSettings() {
+		if(settingsView == null){
+			settingsView = (SettingsView) ViewFactory.getView("SettingsView");
+			settingsPresenter = new SettingsPresenter(settingsView, this);
+			settingsFrame = new JFrame();
+			settingsPresenter.run(settingsFrame);
+			settingsFrame.setVisible(true);
+			settingsFrame.pack();
+		}
+		else if(settingsFrame.isVisible()){
+			settingsFrame.setVisible(false);
+		}
+		else{
+			settingsFrame.setVisible(true);
+		}
+
 	}
 
 	@Override
 	public void onHelp() {
+	}
+
+	@Override
+	public void onJoinClose() {
+		joinFrame.dispose();
+		joinFrame = null;
+		joinView = null;
+		joinPresenter = null;
+	}
+
+	@Override
+	public void onSettingsClose(Settings settings) {
+		if(settings != null){
+			parent.setSettings(settings);
+		}
+		settingsFrame.dispose();
+		settingsFrame = null;
+		settingsView = null;
+		settingsPresenter = null;
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package ztp.chinczyk.model.pawn;
 
-public interface IPawn<K> {
+import java.io.Serializable;
+
+public interface IPawn<K> extends Serializable{
 
 	public K getPosition();
 
