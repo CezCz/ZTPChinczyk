@@ -93,7 +93,6 @@ public class GameView extends JPanel implements GameViewInterface {
 
 		revalidate();
 		repaint();
-
 	}
 
 	public void removePlayer(String playerName) {
@@ -115,8 +114,6 @@ public class GameView extends JPanel implements GameViewInterface {
 		BufferedImage bi = picasso.getPawn(((PawnView) pawn).getColor());
 		JLabel pawnLabel = new JLabel();
 		pawnLabel.setIcon(new ImageIcon(bi));
-		pawnLabel.
-		// fucking no idea how to set absolute value for motherfucker
 	}
 
 
