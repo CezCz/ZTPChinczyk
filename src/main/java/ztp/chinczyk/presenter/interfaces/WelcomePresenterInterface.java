@@ -18,4 +18,6 @@ public interface WelcomePresenterInterface extends Presenter {
 
 	public void onSettingsClose(Settings settings);
 
+	void onHelpClose();
+
 }
