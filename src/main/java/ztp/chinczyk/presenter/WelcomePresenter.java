@@ -15,7 +15,6 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 
 	MainPresenter parent;
 	WelcomeView loginView;
-	ModelFacade modelFacade;
 
 	JoinView joinView;
 	JoinPresenter joinPresenter;
@@ -25,15 +24,17 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 	SettingsPresenter settingsPresenter;
 	JFrame settingsFrame;
 
-	public WelcomePresenter(WelcomeView loginView, ModelFacade modelFacade, MainPresenter parent) {
+	HelpView helpView;
+	HelpPresenter helpPresenter;
+	JFrame helpFrame;
+
+	public WelcomePresenter(WelcomeView loginView, MainPresenter parent) {
 		this.loginView = loginView;
-		this.modelFacade = modelFacade;
 		this.parent = parent;
 	}
 
 	@Override
 	public void run(Container c) {
-
 		c.add((Component) loginView);
 		
 	}
@@ -42,7 +43,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 	public void onStartNewGame() {
 		
 		GameView gameView = (GameView) ViewFactory.getView("GameView");
-		GamePresenter gamePresenter = new GamePresenter(gameView, modelFacade);
+		GamePresenter gamePresenter = new GamePresenter(gameView, parent.getModelFacade());
 		gameView.registerPresenter(gamePresenter);
 
 		JFrame gameFrame = new JFrame();
@@ -72,7 +73,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 
 	@Override
 	public void onSettings() {
-		if(settingsView == null){
+		if(settingsFrame == null){
 			settingsView = (SettingsView) ViewFactory.getView("SettingsView");
 			settingsPresenter = new SettingsPresenter(settingsView, this);
 			settingsFrame = new JFrame();
@@ -86,11 +87,24 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 		else{
 			settingsFrame.setVisible(true);
 		}
-
 	}
 
 	@Override
 	public void onHelp() {
+		if(helpFrame == null){
+			helpView = (HelpView) ViewFactory.getView("HelpView");
+			helpPresenter = new HelpPresenter(helpView, this);
+			helpFrame = new JFrame();
+			helpPresenter.run(helpFrame);
+			helpFrame.setVisible(true);
+			helpFrame.pack();
+		}
+		else if(helpFrame.isVisible()){
+			helpFrame.setVisible(false);
+		}
+		else {
+			helpFrame.setVisible(true);
+		}
 	}
 
 	@Override
@@ -110,6 +124,14 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 		settingsFrame = null;
 		settingsView = null;
 		settingsPresenter = null;
+	}
+
+	@Override
+	public void onHelpClose() {
+		helpFrame.dispose();
+		helpFrame = null;
+		helpView = null;
+		helpPresenter = null;
 	}
 
 	@Override
