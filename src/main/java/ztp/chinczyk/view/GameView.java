@@ -114,6 +114,7 @@ public class GameView extends JPanel implements GameViewInterface {
 		BufferedImage bi = picasso.getPawn(((PawnView) pawn).getColor());
 		JLabel pawnLabel = new JLabel();
 		pawnLabel.setIcon(new ImageIcon(bi));
+
 	}
 
 
