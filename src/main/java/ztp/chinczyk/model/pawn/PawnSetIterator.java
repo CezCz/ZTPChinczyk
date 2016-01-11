@@ -11,7 +11,7 @@ public class PawnSetIterator<N> implements Iterator<IPawn<N>> {
 		this.ps = ps;
 	}
 
-	public int getCurrentElement() {
+	public int getCurrentElementNumber() {
 		return currentElement;
 	}
 

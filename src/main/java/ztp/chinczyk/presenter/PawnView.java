@@ -25,17 +25,17 @@ public class PawnView implements IPawn<Point> {
 		this.pc = pc;
 	}
 
-	static HashMap<Integer, Point> pointMap;
+	static HashMap<Integer, Point> pointMap = new HashMap<>();
 
-	static HashMap<Integer, Point> greenHouseMap;
-	static HashMap<Integer, Point> blueHouseMap;
-	static HashMap<Integer, Point> yellowHouseMap;
-	static HashMap<Integer, Point> redHouseMap;
+	static HashMap<Integer, Point> greenHouseMap = new HashMap<>();
+	static HashMap<Integer, Point> blueHouseMap = new HashMap<>();
+	static HashMap<Integer, Point> yellowHouseMap = new HashMap<>();
+	static HashMap<Integer, Point> redHouseMap = new HashMap<>();
 
-	static HashMap<Integer, Point> greenFinishMap;
-	static HashMap<Integer, Point> blueFinishMap;
-	static HashMap<Integer, Point> yellowFinishMap;
-	static HashMap<Integer, Point> redFinishMap;
+	static HashMap<Integer, Point> greenFinishMap = new HashMap<>();
+	static HashMap<Integer, Point> blueFinishMap = new HashMap<>();
+	static HashMap<Integer, Point> yellowFinishMap = new HashMap<>();
+	static HashMap<Integer, Point> redFinishMap = new HashMap<>();
 
 	static {
 

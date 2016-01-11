@@ -17,14 +17,14 @@ public class PawnRelative implements IPawn<Integer> {
 		relativeOffsetMap.put(Colors.RED, 30);
 	}
 
-	private IPawn p;
+	private IPawn<Integer> p;
 	private Colors c;
 	
 	public Colors getColor() {
 		return c;
 	}
 
-	public PawnRelative(IPawn p, Colors c) {
+	public PawnRelative(IPawn<Integer> p, Colors c) {
 		this.p = p;
 		this.c = c;
 	}

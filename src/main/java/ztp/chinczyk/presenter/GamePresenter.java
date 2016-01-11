@@ -35,7 +35,7 @@ public class GamePresenter implements GamePresenterInterface {
 	public void run(Container c) {
 		onGameJoin("MyMyselfAndI");
 		onGameJoin("MyMyselfAndI2");
-
+		
 		c.add(gameView);
 
 	}
@@ -57,10 +57,18 @@ public class GamePresenter implements GamePresenterInterface {
 		Iterator<IPawn<Integer>> psi = ps.createIterator();
 		psi.first();
 		while (!psi.isDone()) {
-			PawnView p = new PawnView(new PawnRelative(psi.currentItem(), modelFacade.getPlayerColor(player)),
-					((PawnSetIterator) psi).getCurrentElement(), em.get(modelFacade.getPlayerColor(player)));
+
+			IPawn<Integer> currentPawn = psi.currentItem();
+			Colors playerColor = modelFacade.getPlayerColor(player);
+			Integer currentElementNumber = ((PawnSetIterator) psi).getCurrentElementNumber();
+			PawnColor translatedViewColor = em.get(playerColor);
+
+			PawnView p = new PawnView(new PawnRelative(currentPawn, playerColor), currentElementNumber,
+					translatedViewColor);
+
 			gameView.drawPawn(p);
 			psi.next();
+
 		}
 	}
 
