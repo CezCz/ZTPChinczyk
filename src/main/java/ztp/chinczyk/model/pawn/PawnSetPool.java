@@ -12,7 +12,9 @@ public class PawnSetPool {
 	static {
 		for (int i = 0; i < 4; i++) {
 			pawnPool.add(new PawnSet(PawnSetPool.getPawnColor()));
+			count++;
 		}
+		count = 0;
 	}
 
 	public static PawnSet getPawnSet() throws Exception {
@@ -23,7 +25,7 @@ public class PawnSetPool {
 		}
 	}
 
-	public static Colors getPawnColor() {
+	private static Colors getPawnColor() {
 		switch (count) {
 		case 0:
 			return Colors.GREEN;
@@ -39,7 +41,7 @@ public class PawnSetPool {
 	}
 
 	public static void putBack() {
-		count--;
+		count -= 1;
 	}
 
 }

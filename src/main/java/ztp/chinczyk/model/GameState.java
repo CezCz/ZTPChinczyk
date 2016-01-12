@@ -82,7 +82,7 @@ public class GameState implements Serializable{
 	public int getWinner() {
 		return winner;
 	}
-
+	
 	public void setDiceRoll(int diceRoll) {
 		this.diceRoll = diceRoll;
 	}
@@ -114,6 +114,8 @@ public class GameState implements Serializable{
 
 	public void removePlayer(String name) {
 		playersList.remove(playersList.indexOf(name));
+		PawnSetPool.putBack();
+		playersPawns.remove(playersPawns.size()-1);
 	}
 
 	public int getCurrentPlayer() {

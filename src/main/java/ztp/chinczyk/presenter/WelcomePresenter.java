@@ -47,10 +47,10 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 		gameView.registerPresenter(gamePresenter);
 
 		JFrame gameFrame = new JFrame();
+		gameFrame.setSize(1200, 700);
 		gameFrame.setResizable(false);
 		gamePresenter.run(gameFrame);
 		gameFrame.setVisible(true);
-		//gameFrame.pack();
 		
 	}
 

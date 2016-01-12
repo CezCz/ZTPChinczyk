@@ -33,18 +33,49 @@ public class GamePresenter implements GamePresenterInterface {
 
 	@Override
 	public void run(Container c) {
-		onGameJoin("MyMyselfAndI");
-		onGameJoin("MyMyselfAndI2");
-		
 		c.add(gameView);
-
 	}
 
 	@Override
 	public void onStartGame() {
+		modelFacade.newGame();
+		
+//////////////////////////////////////////////
+		onGameJoin("MyMyselfAndI");
+		onGameJoin("MyMyselfAndI2");
+//////////////////////////////////////////////
+		
+		modelFacade.startRound();
+		gameView.hideStartButton();
 
-		// TODO Auto-generated method stub
+		drawState();
+	}
 
+	private void drawState() {
+		if (modelFacade.isFinished() == false) {
+			String currentPlayerName = modelFacade.getCurrentPlayerName();
+			gameView.setCurrentPlayer(currentPlayerName + " " + em.get(modelFacade.getPlayerColor(currentPlayerName)));
+
+			gameView.clearBoard();
+
+			gameView.drawDice(modelFacade.getDice());
+
+			for (String player : modelFacade.getAllPlayers()) {
+				drawPlayerPawns(player);
+			}
+
+			if (modelFacade.noMove()) {
+				gameView.showPassButton();
+			} else {
+				gameView.hidePassButton();
+			}
+
+		}
+		if (modelFacade.winner()) {
+			String player = modelFacade.getWinnerName();
+			gameView.drawWinnerPrompt(player);
+			gameView.showStartButton();
+		}
 	}
 
 	EnumMap<Colors, PawnColor> em = new EnumMap<>(Colors.class);
@@ -53,11 +84,14 @@ public class GamePresenter implements GamePresenterInterface {
 		modelFacade.addPlayer(player);
 		gameView.addPlayer(player);
 
+		drawPlayerPawns(player);
+	}
+
+	private void drawPlayerPawns(String player) {
 		PawnSet ps = modelFacade.getPlayerPawnSet(player);
 		Iterator<IPawn<Integer>> psi = ps.createIterator();
 		psi.first();
 		while (!psi.isDone()) {
-
 			IPawn<Integer> currentPawn = psi.currentItem();
 			Colors playerColor = modelFacade.getPlayerColor(player);
 			Integer currentElementNumber = ((PawnSetIterator) psi).getCurrentElementNumber();
@@ -68,13 +102,26 @@ public class GamePresenter implements GamePresenterInterface {
 
 			gameView.drawPawn(p);
 			psi.next();
+		}
+	}
 
+	public void doMove(PawnView p) {
+		if (modelFacade.isFinished() == false) {
+			if (em.get(modelFacade.getPlayerColor(modelFacade.getCurrentPlayerName())) == p.getColor()) {
+				modelFacade.doMove(p.getPawnNumber());
+				drawState();
+			}
 		}
 	}
 
 	public void onGameLeave(String player) {
 		modelFacade.removePlayer(player);
 		gameView.removePlayer(player);
+	}
+
+	public void doPass() {
+		modelFacade.doPass();
+		drawState();
 	}
 
 }

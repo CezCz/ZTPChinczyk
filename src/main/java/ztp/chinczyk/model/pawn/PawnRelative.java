@@ -19,7 +19,7 @@ public class PawnRelative implements IPawn<Integer> {
 
 	private IPawn<Integer> p;
 	private Colors c;
-	
+
 	public Colors getColor() {
 		return c;
 	}
@@ -31,20 +31,27 @@ public class PawnRelative implements IPawn<Integer> {
 
 	@Override
 	public Integer getPosition() {
-		return ((int)p.getPosition() + relativeOffsetMap.get(c)) % 40;
+		return ((int) p.getPosition() + relativeOffsetMap.get(c)) % 41;
 	}
 
 	@Override
 	public void setPosition(Integer relPosition) {
-
-		int absPos = ((((relPosition - relativeOffsetMap.get(c)) % 40) + 40) % 40);
+		int absPos = ((((relPosition - relativeOffsetMap.get(c)) % 41) + 41) % 41);
 		p.setPosition(absPos);
-
 	}
 
 	@Override
 	public void resetPawn() {
 		p.resetPawn();
+	}
+
+	public Integer getAbsolutePosition() {
+		return p.getPosition();
+	}
+
+	@Override
+	public boolean isInFinish() {
+		return p.isInFinish();
 	}
 
 }

@@ -9,5 +9,7 @@ public interface IPawn<K> extends Serializable{
 	public void setPosition(K position);
 
 	public void resetPawn();
+	
+	public boolean isInFinish();
 
 }

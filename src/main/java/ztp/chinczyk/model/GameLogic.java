@@ -9,12 +9,7 @@ import ztp.util.iterator.Iterator;
 public class GameLogic {
 
 	private GameState gs;
-	private final static int lastSquare = 40;
 	private final static int house = 0;
-
-	public GameLogic() {
-		gs = new GameState();
-	}
 
 	public void newGame() {
 		gs = new GameState();
@@ -27,7 +22,7 @@ public class GameLogic {
 	}
 
 	public void startRound() {
-		gs.setDiceRoll(Dice.rollDice());
+		prePlayerMove();
 	}
 
 	public void doMove(int pawnNumber) {
@@ -85,10 +80,11 @@ public class GameLogic {
 				psi.first();
 				while (!psi.isDone()) {
 					IPawn p2 = new PawnRelative(psi.currentItem(), gs.getPlayerColor(i));
-
 					if (p2.getPosition() == myPawnRel.getPosition()) {
-						p2.resetPawn();
-						return;
+						if (!p2.isInFinish()) {
+							p2.resetPawn();
+							return;
+						}
 					}
 					psi.next();
 				}
@@ -102,7 +98,7 @@ public class GameLogic {
 		it.first();
 		boolean winner = true;
 		while (!it.isDone()) {
-			if (it.currentItem().getPosition() < 40) {
+			if (it.currentItem().getPosition() < 41) {
 				winner = false;
 			}
 			it.next();
@@ -194,11 +190,7 @@ public class GameLogic {
 	}
 
 	public void removePlayer(String name) {
-
 		gs.removePlayer(name);
-		// pop pawnset
-		// remove player
-
 	}
 
 	public void addPlayer(String name) {

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import ztp.chinczyk.model.pawn.IPawn;
 import ztp.chinczyk.model.pawn.PawnRelative;
-import ztp.chinczyk.model.util.Colors;
 import ztp.chinczyk.view.PawnColor;
 
 public class PawnView implements IPawn<Point> {
@@ -23,6 +22,7 @@ public class PawnView implements IPawn<Point> {
 		this.pawnNumber = pawnNumber;
 		this.p = p;
 		this.pc = pc;
+		
 	}
 
 	static HashMap<Integer, Point> pointMap = new HashMap<>();
@@ -124,10 +124,10 @@ public class PawnView implements IPawn<Point> {
 
 	@Override
 	public Point getPosition() {
-
-		Colors c = ((PawnRelative) p).getColor();
-		int pos = (int) p.getPosition();
-
+		PawnColor c = pc;
+		int pos =  ((PawnRelative) p).getAbsolutePosition();
+		int relPos = p.getPosition();
+		
 		if (pos == 0) {
 			switch (c) {
 			case GREEN:
@@ -140,7 +140,7 @@ public class PawnView implements IPawn<Point> {
 				return redHouseMap.get(pawnNumber);
 			}
 		} else if (pos < 41) {
-			return pointMap.get(pos);
+			return pointMap.get(relPos);
 		} else {
 			switch (c) {
 			case GREEN:
@@ -160,11 +160,12 @@ public class PawnView implements IPawn<Point> {
 	@Override
 	public void setPosition(Point position) {
 
-		Colors c = ((PawnRelative) p).getColor();
+		PawnColor c = pc;
 
 		// logic of this is quite complex but i hope it works
 		if ((position.x == 250 || position.y == 250)
 				&& (position.x < 500 && position.x > 50 && position.y > 50 && position.y < 500)) {
+			
 			Set<Integer> ks;
 			switch (c) {
 			case GREEN:
@@ -208,12 +209,21 @@ public class PawnView implements IPawn<Point> {
 				}
 			}
 		}
-
+		
 	}
 
 	@Override
 	public void resetPawn() {
 		p.resetPawn();
+	}
+	
+	public int getPawnNumber() {
+		return pawnNumber;
+	}
+
+	@Override
+	public boolean isInFinish() {
+		return p.isInFinish();
 	}
 
 }
