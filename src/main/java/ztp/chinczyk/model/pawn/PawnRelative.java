@@ -7,7 +7,6 @@ import ztp.chinczyk.model.util.Colors;
 
 public class PawnRelative implements IPawn<Integer> {
 
-	// offset needs to be mod 40
 	private static Map<Colors, Integer> relativeOffsetMap = new EnumMap<Colors, Integer>(Colors.class);
 
 	static {
