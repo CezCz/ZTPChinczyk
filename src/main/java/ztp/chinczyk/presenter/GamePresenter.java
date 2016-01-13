@@ -56,7 +56,7 @@ public class GamePresenter implements GamePresenterInterface {
 					checkIfYourTurn();
 				}
 				if (message.getHeadValue().equals("iQuit")){
-					onGameLeave((String) message.getBody());
+					onGameLeave(message.getHeadKey());
 					drawState();
 					sendState();
 				}
@@ -98,7 +98,7 @@ public class GamePresenter implements GamePresenterInterface {
 	int joinPort;
 	String localPlayer;
 
-	public GamePresenter(GameView gameView, ModelFacade modelFacade, GameNetworkProvider networkProvider,Settings settings, boolean asHost) {//// TODO: 12.01.2016
+	public GamePresenter(GameView gameView, ModelFacade modelFacade, GameNetworkProvider networkProvider,Settings settings, boolean asHost) {
 		this.gameView = gameView;
 		this.modelFacade = modelFacade;
 		this.networkProvider = networkProvider;
@@ -210,6 +210,7 @@ public class GamePresenter implements GamePresenterInterface {
 	public void onGameLeave(String player) {
 		modelFacade.removePlayer(player);
 		gameView.removePlayer(player);
+		networkProvider.sendMessage(new StringMessage(localPlayer,"iQuit",localPlayer));
 	}
 
 	public void doPass() {
