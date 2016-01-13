@@ -48,27 +48,27 @@ public class GameView extends JPanel implements GameViewInterface {
 
 		infoField = new JPanel();
 		infoField.setPreferredSize(new Dimension(300, 550));
-		
+
 		currentPlayerLabel = new JLabel();
-		
+
 		JPanel currentPlayerPanel = new JPanel();
 		currentPlayerPanel.setPreferredSize(new Dimension(300, 50));
 		currentPlayerPanel.add(currentPlayerLabel);
-		
+
 		readyToPlay = new JButton("Start");
 		readyToPlay.setPreferredSize(new Dimension(150, 50));
 		passButton = new JButton("Pass");
 		passButton.setPreferredSize(new Dimension(150, 50));
 		passButton.setVisible(false);
-		
+
 		JPanel navPanel = new JPanel();
 		navPanel.setLayout(new GridLayout(1, 2));
 		navPanel.add(readyToPlay);
 		navPanel.add(passButton);
-		
+
 		infoField.add(currentPlayerPanel);
 		infoField.add(navPanel);
-		
+
 		this.add(gameField);
 		this.add(infoField);
 
@@ -237,9 +237,8 @@ public class GameView extends JPanel implements GameViewInterface {
 
 	public void drawWinnerPrompt(String player) {
 
-		JOptionPane.showMessageDialog(this,
-			    "Wygra³ gracz " + player);
-		
+		JOptionPane.showMessageDialog(this, "Wygra³ gracz " + player);
+
 	}
 
 }

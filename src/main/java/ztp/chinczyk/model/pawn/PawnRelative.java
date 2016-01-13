@@ -3,6 +3,7 @@ package ztp.chinczyk.model.pawn;
 import java.util.EnumMap;
 import java.util.Map;
 
+import jdk.nashorn.internal.ir.TernaryNode;
 import ztp.chinczyk.model.util.Colors;
 
 public class PawnRelative implements IPawn<Integer> {
@@ -30,12 +31,19 @@ public class PawnRelative implements IPawn<Integer> {
 
 	@Override
 	public Integer getPosition() {
-		return ((int) p.getPosition() + relativeOffsetMap.get(c)) % 41;
+		int k = ((int) p.getPosition() + relativeOffsetMap.get(c));
+		if (k > 40) {
+			return (k % 41) + 1;
+		}
+		return k % 41;
 	}
 
 	@Override
 	public void setPosition(Integer relPosition) {
 		int absPos = ((((relPosition - relativeOffsetMap.get(c)) % 41) + 41) % 41);
+
+		absPos = (absPos == 0) ? 1 : absPos;
+
 		p.setPosition(absPos);
 	}
 
