@@ -4,19 +4,19 @@ import ztp.chinczyk.model.Settings;
 
 public interface WelcomePresenterInterface extends Presenter {
 	
-	public void onStartNewGame();
+	void onStartNewGame();
 	
-	public void onJoinGame();
+	void onJoinGame();
 
-	public void onSettings();
+	void onSettings();
 	
-	public void onExit();
+	void onExit();
 	
-	public void onHelp();
+	void onHelp();
 
-	public void onJoinClose();
+	void onJoinClose();
 
-	public void onSettingsClose(Settings settings);
+	void onSettingsClose(Settings settings);
 
 	void onHelpClose();
 

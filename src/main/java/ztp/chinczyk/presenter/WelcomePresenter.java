@@ -36,7 +36,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 
 	@Override
 	public void run(Container c) {
-		c.add((Component) loginView);
+		c.add(loginView);
 		
 	}
 

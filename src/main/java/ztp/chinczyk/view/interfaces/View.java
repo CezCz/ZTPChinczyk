@@ -5,10 +5,10 @@ import ztp.chinczyk.presenter.interfaces.Presenter;
 public interface View<K extends Presenter> {
 	
 	
-	public void registerPresenter(K p);
+	void registerPresenter(K p);
 
-	public void show();
+	void show();
 	
-	public void hide();
+	void hide();
 
 }

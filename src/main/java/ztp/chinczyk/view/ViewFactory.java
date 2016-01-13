@@ -26,7 +26,7 @@ public abstract class ViewFactory {
 				throw new RuntimeException("No such view: " + id);
 			}
 		}
-		return ((ViewFactory) ViewMap.get(id)).create();
+		return ViewMap.get(id).create();
 	}
 
 }

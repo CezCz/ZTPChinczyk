@@ -1,10 +1,7 @@
 package ztp.chinczyk.presenter;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.util.EnumMap;
-
-import com.sun.org.apache.xml.internal.utils.Hashtree2Node;
 
 import ztp.chinczyk.model.GameState;
 import ztp.chinczyk.model.ModelFacade;

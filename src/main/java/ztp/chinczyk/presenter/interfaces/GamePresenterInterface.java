@@ -2,9 +2,9 @@ package ztp.chinczyk.presenter.interfaces;
 
 public interface GamePresenterInterface extends Presenter {
 	
-	public void onStartGame();
+	void onStartGame();
 
-	public void beforeStart();
+	void beforeStart();
 	
 	
 	

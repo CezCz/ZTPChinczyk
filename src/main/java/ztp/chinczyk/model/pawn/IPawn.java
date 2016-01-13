@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public interface IPawn<K> extends Serializable{
 
-	public K getPosition();
+	K getPosition();
 
-	public void setPosition(K position);
+	void setPosition(K position);
 
-	public void resetPawn();
+	void resetPawn();
 	
-	public boolean isInFinish();
+	boolean isInFinish();
 
 }

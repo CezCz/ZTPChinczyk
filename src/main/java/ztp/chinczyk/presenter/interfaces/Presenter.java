@@ -5,7 +5,7 @@ import java.awt.Container;
 public interface Presenter {
 	
 	
-	public void run(Container c);
+	void run(Container c);
 	
 	
 }

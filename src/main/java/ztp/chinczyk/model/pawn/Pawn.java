@@ -22,11 +22,7 @@ public class Pawn implements IPawn<Integer> {
 
 	@Override
 	public boolean isInFinish() {
-		if(position > 40) {
-			return true;
-		} else {
-			return false;
-		}
+		return position > 40;
 	}
 
 }
