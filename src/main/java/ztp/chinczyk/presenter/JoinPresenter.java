@@ -2,23 +2,37 @@ package ztp.chinczyk.presenter;
 
 import ztp.chinczyk.presenter.interfaces.JoinPresenterInterface;
 import ztp.chinczyk.presenter.interfaces.WelcomePresenterInterface;
+import ztp.chinczyk.view.GameView;
 import ztp.chinczyk.view.JoinView;
+import ztp.chinczyk.view.ViewFactory;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class JoinPresenter implements JoinPresenterInterface{
     private JoinView joinView;
-    private WelcomePresenterInterface parent;
+    private WelcomePresenter parent;
 
     JoinPresenter(JoinView joinView, WelcomePresenterInterface parent){
         this.joinView = joinView;
         this.joinView.registerPresenter(this);
-        this.parent = parent;
+        this.parent = (WelcomePresenter) parent;
     }
 
     @Override
     public void onConnect(String address, String port) {//TODO
-        //connect
+        GameView gameView = (GameView) ViewFactory.getView("GameView");
+        GamePresenter gamePresenter = new GamePresenter(gameView, parent.getModelFacade(), parent.getGameNetworkProvider(),parent.getSettings() ,false);
+        gameView.registerPresenter(gamePresenter);
+
+        JFrame gameFrame = new JFrame();
+        gameFrame.setSize(900, 600);
+        gameFrame.setResizable(false);
+        gamePresenter.run(gameFrame);
+        gameFrame.setVisible(true);
+        gamePresenter.setJoinAddress(address);
+        gamePresenter.setJoinPort(Integer.parseInt(port));
+        gamePresenter.beforeStart();
         parent.onJoinClose();
     }
 

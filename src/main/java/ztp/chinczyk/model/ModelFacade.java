@@ -73,4 +73,12 @@ public class ModelFacade {
 		g.newGame();
 	}
 
+	public GameState getGameState(){
+		return g.getGs();
+	}
+
+	public void setGameState(GameState gameState){
+		g.setGs(gameState);
+	}
+
 }

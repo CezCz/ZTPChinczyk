@@ -1,5 +1,6 @@
 package ztp.util.network.lowLevel;
 
+import ztp.util.network.ClientConnectObserver;
 import ztp.util.network.dataPackages.Message;
 import ztp.util.network.dataPackages.MessageReceiver;
 import ztp.util.network.dataPackages.StringMessage;
@@ -22,12 +23,15 @@ public class Server implements Runnable{
     ObjectOutputStream[] outputStreams;
     ObjectInputStream[] inputStreams;
     List<MessageReceiver> messageReceivers;
+    List<ClientConnectObserver> connectionObservers;
     AtomicBoolean isOn;
+    int lastSender;
 
     public Server(int port, int connectionsCount){
         isOn = new AtomicBoolean(true);
         this.port = port;
         messageReceivers = Collections.synchronizedList(new LinkedList<MessageReceiver>());
+        connectionObservers = Collections.synchronizedList(new LinkedList<>());
         outputStreams = new ObjectOutputStream[connectionsCount];
         inputStreams = new ObjectInputStream[connectionsCount];
         sockets = new Socket[connectionsCount];
@@ -42,6 +46,7 @@ public class Server implements Runnable{
                 serverSockets[i] = null;
                 outputStreams[i] = new ObjectOutputStream(sockets[i].getOutputStream());
                 inputStreams[i] = new ObjectInputStream(sockets[i].getInputStream());
+                notifyObservers(i);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -52,9 +57,15 @@ public class Server implements Runnable{
         messageReceivers.add(receiver);
     }
 
+    public void registerConnectionObserver(ClientConnectObserver observer){
+        connectionObservers.add(observer);
+    }
+
     public void send(int id, Message message){
         try {
+            outputStreams[id].reset();
             outputStreams[id].writeObject(message);
+            System.out.println("Wiadomość do "+id+ " " + message);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,6 +74,14 @@ public class Server implements Runnable{
     public void sendToAll(Message message){
         for(int i = 0; i < outputStreams.length; i++){
             send(i, message);
+        }
+    }
+
+    public void sendToAllExceptLast(Message message){
+        for (int i = 0; i < outputStreams.length; i++){
+            if(i != lastSender){
+                send(i, message);
+            }
         }
     }
 
@@ -94,9 +113,11 @@ public class Server implements Runnable{
                 }
                 */
                 try {
-                    System.out.println("Dane od "+i);
-                    WrappedMessage wrappedMessage = new WrappedMessage("fromClientID",Integer.toString(i), (Message) inputStreams[i].readObject());
-                    notifyReceivers(wrappedMessage);
+                    Message receivedMessage = (Message) inputStreams[i].readObject();
+                    System.out.println("Dane od "+receivedMessage);
+                    //WrappedMessage wrappedMessage = new WrappedMessage("fromClientID",Integer.toString(i), (Message) inputStreams[i].readObject());
+                    lastSender = i;
+                    notifyReceivers(receivedMessage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
@@ -109,6 +130,12 @@ public class Server implements Runnable{
     private void notifyReceivers(Message message){
         for(MessageReceiver receiver : messageReceivers){
             receiver.receiveMessage(message);
+        }
+    }
+
+    private void notifyObservers(int id){
+        for(ClientConnectObserver observer: connectionObservers){
+            observer.notifyAboutConnection(id);
         }
     }
 }

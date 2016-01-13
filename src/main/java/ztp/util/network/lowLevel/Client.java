@@ -12,19 +12,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Client implements Runnable{
-    private class NotConnectedException extends RuntimeException{
-        NotConnectedException(String message){
+public class Client implements Runnable {
+    private class NotConnectedException extends RuntimeException {
+        NotConnectedException(String message) {
             super(message);
         }
     }
 
-    private interface ClientState{
+    private interface ClientState {
         void disconnect();
+
         void send(Message message);
     }
 
-    private class ConnectedState implements ClientState{
+    private class ConnectedState implements ClientState {
 
         @Override
         public void disconnect() {
@@ -42,7 +43,8 @@ public class Client implements Runnable{
         @Override
         public void send(Message message) {
             try {
-                System.out.println("Wysylam do serwera");
+                System.out.println("Wysylam do serwera " +message);
+                outputStream.reset();
                 outputStream.writeObject(message);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -50,7 +52,7 @@ public class Client implements Runnable{
         }
     }
 
-    private class DisconnectedState implements ClientState{
+    private class DisconnectedState implements ClientState {
 
         @Override
         public void disconnect() {
@@ -74,7 +76,7 @@ public class Client implements Runnable{
     private ClientState currentState;
     private AtomicBoolean isOn;
 
-    public Client(String address, int port){
+    public Client(String address, int port) {
         isOn = new AtomicBoolean(true);
         connectedState = new ConnectedState();
         disconnectedState = new DisconnectedState();
@@ -84,7 +86,7 @@ public class Client implements Runnable{
         this.port = port;
     }
 
-    private void connect(){
+    private void connect() {
         try {
             socket = new Socket(address, port);
             System.out.println("Polaczono z serwerem");
@@ -96,37 +98,36 @@ public class Client implements Runnable{
         }
     }
 
-    private void notifyReceivers(Message message){
-        for(MessageReceiver receiver : messageReceivers){
+    private void notifyReceivers(Message message) {
+        for (MessageReceiver receiver : messageReceivers) {
             receiver.receiveMessage(message);
         }
     }
 
-    public void registerReceiver(MessageReceiver receiver){
+    public void registerReceiver(MessageReceiver receiver) {
         messageReceivers.add(receiver);
     }
 
-    public void send(Message message){
+    public void send(Message message) {
         currentState.send(message);
     }
 
-    public boolean connected(){
-        return socket!=null && socket.isConnected();
+    public boolean connected() {
+        return socket != null && socket.isConnected();
     }
 
-    public void disconnect(){
+    public void disconnect() {
         currentState.disconnect();
     }
 
     @Override
     public void run() {
         connect();
-        while (isOn.get()){
+        while (isOn.get()) {
             try {
-                if(inputStream.available() > 0){
-                    System.out.println("Dane z serwera");
-                    notifyReceivers((Message) inputStream.readObject());
-                }
+                Message receivedMessage = (Message) inputStream.readObject();
+                System.out.println("Dane z serwera " + receivedMessage);
+                notifyReceivers(receivedMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

@@ -29,4 +29,9 @@ public class GameStateMessage implements Message, Serializable{
     public Object getBody() {
         return gameState;
     }
+
+    @Override
+    public String toString(){
+        return "{"+headKey+":"+headValue+"-"+gameState+"}";
+    }
 }

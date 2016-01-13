@@ -9,11 +9,13 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class SettingsPresenter implements SettingsPresenterInterface {
+    private Settings currentSettings;
     private SettingsView settingsView;
     private WelcomePresenterInterface parent;
 
-    public SettingsPresenter(SettingsView settingsView, WelcomePresenterInterface parent){
+    public SettingsPresenter(SettingsView settingsView, WelcomePresenterInterface parent, Settings current){
         this.settingsView = settingsView;
+        this.currentSettings = current;
         this.settingsView.registerPresenter(this);
         this.parent = parent;
     }
@@ -22,6 +24,7 @@ public class SettingsPresenter implements SettingsPresenterInterface {
     public void onAccept(HashMap<String, String> rawSettings) {
         Settings settings = new Settings();
         settings.setHostPort(Integer.parseInt(rawSettings.get("port")));
+        settings.setPlayerCount(Integer.parseInt(rawSettings.get("playerCount")));
         parent.onSettingsClose(settings);
     }
 
@@ -33,5 +36,9 @@ public class SettingsPresenter implements SettingsPresenterInterface {
     @Override
     public void run(Container c) {
         c.add(settingsView);
+    }
+
+    public Settings getCurrentSettings() {
+        return currentSettings;
     }
 }

@@ -10,6 +10,7 @@ import ztp.chinczyk.model.Settings;
 import ztp.chinczyk.presenter.interfaces.Presenter;
 import ztp.chinczyk.presenter.interfaces.WelcomePresenterInterface;
 import ztp.chinczyk.view.*;
+import ztp.util.network.GameNetworkProvider;
 
 public class WelcomePresenter implements WelcomePresenterInterface {
 
@@ -43,7 +44,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 	public void onStartNewGame() {
 		
 		GameView gameView = (GameView) ViewFactory.getView("GameView");
-		GamePresenter gamePresenter = new GamePresenter(gameView, parent.getModelFacade());
+		GamePresenter gamePresenter = new GamePresenter(gameView, parent.getModelFacade(), parent.getGameNetworkProvider(),parent.getSettings() ,true);
 		gameView.registerPresenter(gamePresenter);
 
 		JFrame gameFrame = new JFrame();
@@ -51,6 +52,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 		gameFrame.setResizable(false);
 		gamePresenter.run(gameFrame);
 		gameFrame.setVisible(true);
+		gamePresenter.beforeStart();
 		
 	}
 
@@ -76,7 +78,7 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 	public void onSettings() {
 		if(settingsFrame == null){
 			settingsView = (SettingsView) ViewFactory.getView("SettingsView");
-			settingsPresenter = new SettingsPresenter(settingsView, this);
+			settingsPresenter = new SettingsPresenter(settingsView, this, parent.getSettings());
 			settingsFrame = new JFrame();
 			settingsPresenter.run(settingsFrame);
 			settingsFrame.setVisible(true);
@@ -140,4 +142,15 @@ public class WelcomePresenter implements WelcomePresenterInterface {
 		System.exit(1);
 	}
 
+	public ModelFacade getModelFacade(){
+		return parent.getModelFacade();
+	}
+
+	public Settings getSettings(){
+		return parent.getSettings();
+	}
+
+	public GameNetworkProvider getGameNetworkProvider(){
+		return parent.getGameNetworkProvider();
+	}
 }

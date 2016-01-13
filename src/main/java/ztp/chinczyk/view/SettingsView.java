@@ -29,17 +29,20 @@ public class SettingsView extends JPanel implements SettingsViewInterface{
     JButton acceptButton;
     JButton cancelButton;
     JTextField portTextField;
-
+    JTextField playerCountField;
 
     public SettingsView(){
         super();
         this.setLayout(new GridLayout(2,2));
         acceptButton = new JButton("Zatwierdź");
         cancelButton = new JButton("Anuluj");
-        portTextField = new JTextField("Port hosta");
+        portTextField = new JTextField();
+        portTextField.setToolTipText("Port hosta");
+        playerCountField = new JTextField();
+        playerCountField.setToolTipText("Liczba graczy");
 
         this.add(portTextField);
-        this.add(new JLabel());
+        this.add(playerCountField);
         this.add(acceptButton);
         this.add(cancelButton);
     }
@@ -48,6 +51,9 @@ public class SettingsView extends JPanel implements SettingsViewInterface{
     public void registerPresenter(SettingsPresenter p) {
         presenter = p;
 
+        portTextField.setText(Integer.toString(presenter.getCurrentSettings().getHostPort()));
+        playerCountField.setText(Integer.toString(presenter.getCurrentSettings().getPlayerCount()));
+
         acceptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -55,11 +61,21 @@ public class SettingsView extends JPanel implements SettingsViewInterface{
                 try{
                     Integer.parseInt(portTextField.getText());
                     settings.put("port", portTextField.getText());
-                    p.onAccept(settings);
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(SettingsView.this,"Port powinien być liczbą całkowitą!");
                 }
-
+                finally {
+                    try {
+                        int playerCount = Integer.parseInt(playerCountField.getText());
+                        if(playerCount < 2 || playerCount > 4){
+                            throw new RuntimeException("Wrong player count");
+                        }
+                        settings.put("playerCount", playerCountField.getText());
+                        p.onAccept(settings);
+                    }catch (Exception ex){
+                        JOptionPane.showMessageDialog(SettingsView.this, "Liczba graczy powinna być liczbą całkowitą z zakresu 2-4!");
+                    }
+                }
             }
         });
 

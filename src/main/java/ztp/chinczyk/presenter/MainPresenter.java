@@ -12,6 +12,8 @@ import ztp.chinczyk.view.ViewFactory;
 import ztp.util.network.GameNetworkProvider;
 
 public class MainPresenter implements Presenter {
+	static private int DEFAULT_PORT = 6211;
+	static private int DEFAULT_PLAYER_COUNT = 2;
 
 	private ModelFacade modelFacade;
 	private Settings settings;
@@ -21,6 +23,9 @@ public class MainPresenter implements Presenter {
 	public MainPresenter(ModelFacade modelFacade) {
 		this.modelFacade = modelFacade;
 		this.gameNetworkProvider = GameNetworkProvider.getGameNetworkProvider();
+		this.settings = new Settings();
+		this.settings.setHostPort(DEFAULT_PORT);
+		this.settings.setPlayerCount(DEFAULT_PLAYER_COUNT);
 	}
 
 	public void run(Container c) {
@@ -51,5 +56,13 @@ public class MainPresenter implements Presenter {
 
 	public void setModelFacade(ModelFacade modelFacade) {
 		this.modelFacade = modelFacade;
+	}
+
+	public GameNetworkProvider getGameNetworkProvider() {
+		return gameNetworkProvider;
+	}
+
+	public void setGameNetworkProvider(GameNetworkProvider gameNetworkProvider) {
+		this.gameNetworkProvider = gameNetworkProvider;
 	}
 }

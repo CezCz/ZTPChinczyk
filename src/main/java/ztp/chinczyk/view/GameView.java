@@ -9,12 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import ztp.chinczyk.presenter.GamePresenter;
 import ztp.chinczyk.presenter.PawnView;
@@ -26,7 +21,6 @@ public class GameView extends JPanel implements GameViewInterface {
 	GamePresenter gamePresenter;
 
 	private JLayeredPane gameField;
-	private JLabel dice;
 	private ArrayList<JLabel> playersLabels;
 	private JLabel board;
 	private JPanel infoField;
@@ -34,6 +28,8 @@ public class GameView extends JPanel implements GameViewInterface {
 	private PictureManager picasso = PictureManager.getInstance();
 	private JButton passButton;
 	private JLabel currentPlayerLabel;
+	private JLabel statusLabel;
+	private boolean unlocked;
 
 	public GameView() {
 
@@ -48,30 +44,37 @@ public class GameView extends JPanel implements GameViewInterface {
 
 		infoField = new JPanel();
 		infoField.setPreferredSize(new Dimension(300, 550));
+		infoField.setLayout(new BoxLayout(infoField,BoxLayout.Y_AXIS));
 
 		currentPlayerLabel = new JLabel();
+		statusLabel = new JLabel();
+		statusLabel.setText("");
 
 		JPanel currentPlayerPanel = new JPanel();
 		currentPlayerPanel.setPreferredSize(new Dimension(300, 50));
 		currentPlayerPanel.add(currentPlayerLabel);
-
+		
 		readyToPlay = new JButton("Start");
 		readyToPlay.setPreferredSize(new Dimension(150, 50));
 		passButton = new JButton("Pass");
 		passButton.setPreferredSize(new Dimension(150, 50));
 		passButton.setVisible(false);
-
+		
 		JPanel navPanel = new JPanel();
 		navPanel.setLayout(new GridLayout(1, 2));
 		navPanel.add(readyToPlay);
 		navPanel.add(passButton);
-
+		
 		infoField.add(currentPlayerPanel);
+		infoField.add(Box.createRigidArea(new Dimension(0,200)));
 		infoField.add(navPanel);
+		infoField.add(Box.createRigidArea(new Dimension(0,200)));
+		infoField.add(statusLabel);
 
 		this.add(gameField);
 		this.add(infoField);
 
+		this.unlocked = true;
 	}
 
 	private static class Factory extends ViewFactory {
@@ -177,7 +180,7 @@ public class GameView extends JPanel implements GameViewInterface {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (pressed == false) {
+				if (pressed == false && unlocked) {
 					pressed = true;
 					gamePresenter.doMove(pawn);
 				}
@@ -237,8 +240,31 @@ public class GameView extends JPanel implements GameViewInterface {
 
 	public void drawWinnerPrompt(String player) {
 
-		JOptionPane.showMessageDialog(this, "Wygra³ gracz " + player);
+		JOptionPane.showMessageDialog(this, "Wygraï¿½ gracz " + player);
 
 	}
 
+	public void setStatus(String status){
+		this.statusLabel.setText(status);
+	}
+
+	public String getStatus(){
+		return this.statusLabel.getText();
+	}
+
+	public boolean isUnlocked() {
+		return unlocked;
+	}
+
+	public void setUnlocked(boolean unlocked) {
+		this.unlocked = unlocked;
+		if (!this.unlocked){
+			readyToPlay.setEnabled(false);
+			passButton.setEnabled(false);
+		}
+		else{
+			readyToPlay.setEnabled(true);
+			passButton.setEnabled(true);
+		}
+	}
 }

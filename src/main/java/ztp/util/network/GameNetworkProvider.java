@@ -1,5 +1,6 @@
 package ztp.util.network;
 
+import com.sun.istack.internal.Nullable;
 import ztp.util.network.dataPackages.Message;
 import ztp.util.network.dataPackages.MessageReceiver;
 import ztp.util.network.lowLevel.Client;
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GameNetworkProvider implements MessageReceiver{
+public class GameNetworkProvider{
     private static GameNetworkProvider gameNetworkProvider;
 
     private int clientID;
@@ -18,7 +19,6 @@ public class GameNetworkProvider implements MessageReceiver{
     private Thread serverThread;
     private Client client;
     private Server server;
-    private List<MessageReceiver> messageReceivers;
 
     public static GameNetworkProvider getGameNetworkProvider(){
         if(gameNetworkProvider == null){
@@ -28,20 +28,30 @@ public class GameNetworkProvider implements MessageReceiver{
     }
 
     public GameNetworkProvider(){
-        messageReceivers = Collections.synchronizedList(new LinkedList<>());
         clientMode = false;
     }
 
-    public void init(String address, int port){
-        client = new Client(address, port);
-        clientThread = new Thread(client);
+    public void init(String address, int port, @Nullable MessageReceiver receiver){
         clientMode = true;
+        client = new Client(address, port);
+        if(receiver != null){
+            registerReceiver(receiver);
+        }
+        clientThread = new Thread(client);
+        clientThread.start();
     }
 
-    public void init(int port, int clientsCount){
-        server = new Server(port, clientsCount);
-        serverThread = new Thread(server);
+    public void init(int port, int clientsCount, @Nullable ClientConnectObserver observer, @Nullable MessageReceiver receiver){
         clientMode = false;
+        server = new Server(port, clientsCount);
+        if(observer != null){
+            registerConnectionObserver(observer);
+        }
+        if(receiver != null){
+            registerReceiver(receiver);
+        }
+        serverThread = new Thread(server);
+        serverThread.start();
     }
 
     public void close(){
@@ -69,19 +79,19 @@ public class GameNetworkProvider implements MessageReceiver{
         }
     }
 
-    public void passMessages(Message message){
-        for(MessageReceiver receiver: messageReceivers){
-            receiver.receiveMessage(message);
+    public void registerReceiver(MessageReceiver receiver){
+        if(clientMode){
+            client.registerReceiver(receiver);
+        }
+        else {
+            server.registerReceiver(receiver);
         }
     }
 
-    public void registerReceiver(MessageReceiver receiver){
-        messageReceivers.add(receiver);
-    }
-
-    @Override
-    public void receiveMessage(Message message) {
-        passMessages(message);
+    public void registerConnectionObserver(ClientConnectObserver observer){
+        if(!clientMode){
+            server.registerConnectionObserver(observer);
+        }
     }
 
     public void sendMessage(Message message){
@@ -92,6 +102,12 @@ public class GameNetworkProvider implements MessageReceiver{
             else{
                 server.sendToAll(message);
             }
+        }
+    }
+
+    public void sendMessageToAllExceptLast(Message message){
+        if(isRunning() && !clientMode){
+            server.sendToAllExceptLast(message);
         }
     }
 
@@ -108,4 +124,5 @@ public class GameNetworkProvider implements MessageReceiver{
     public boolean isClientMode() {
         return clientMode;
     }
+
 }
